@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "496147335399",
+    "project_id": "fabriapp-7bea3",
+    "storage_bucket": "fabriapp-7bea3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:496147335399:android:7e95efa98624a85df97a42",
+        "android_client_info": {
+          "package_name": "com.example.fabriapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "496147335399-aph4c1iuf1rn3q7nftt60ab8ssj9ipu8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_LOZ38sb2lx6AtVYzxQH4EbUaR5jaIiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "496147335399-aph4c1iuf1rn3q7nftt60ab8ssj9ipu8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
