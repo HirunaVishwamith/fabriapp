@@ -1,8 +1,13 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fabriapp/loginui.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as p;
 
 class Sendrequest extends StatefulWidget {
   const Sendrequest({Key? key}) : super(key: key);
@@ -21,14 +26,36 @@ class _SendrequestState extends State<Sendrequest> {
   bool showDate = false;
 // file upload
   PlatformFile? pickedFile;
+  late List<File> files;
+  FilePickerResult? result;
 
-  // Future uploadFile() async {
-  // final path = 'files/user_name';
-  //  final file = File(pickedFile!.path!);
+  Future pickFiles() async {
+    result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    if (result == null) return;
+    setState(() => files = result!.paths.map((path) => File(path!)).toList());
+  }
 
-  //  final ref = FirebaseStorage.instance.ref().child(path);
-  //  ref.putFile(file);
-//  }
+  Future uploadFile() async {
+    // final path = 'files/user_name';
+    //  final file = File(pickedFile!.path!);
+
+    //  final ref = FirebaseStorage.instance.ref().child(path);
+    //  ref.putFile(file);
+    // final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    if (result == null) return;
+    for (var file in files) {
+      var i = 0;
+      String bs = p.basename(file.path);
+      final destination = 'files/$bs';
+      try {
+        final ref = FirebaseStorage.instance.ref(destination);
+        ref.putFile(file);
+        i++;
+      } on FirebaseException catch (e) {
+        print(e);
+      }
+    }
+  }
 
   Future chooseImage() async {
     final result = await FilePicker.platform.pickFiles();
@@ -65,6 +92,28 @@ class _SendrequestState extends State<Sendrequest> {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController titlecont = TextEditingController();
+    TextEditingController discont = TextEditingController();
+    String name = "";
+    String site_nam = "";
+    String date = "";
+
+    Future _submit() async {
+      try {
+        await FirebaseFirestore.instance.collection('request').add({
+          'title': titlecont.text,
+          'discription': discont.text,
+          'sendto': name,
+          'site_name': site_nam,
+          'date': date,
+        });
+
+        // ignore: unused_catch_clause
+      } on FirebaseAuthException catch (e) {
+        print(e);
+      }
+    }
+
     return MaterialApp(
       home: Scaffold(
         body: SafeArea(
@@ -130,6 +179,7 @@ class _SendrequestState extends State<Sendrequest> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           TextFormField(
+                            controller: titlecont,
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'Enter the Title',
@@ -270,40 +320,42 @@ class _SendrequestState extends State<Sendrequest> {
                             ),
                             child: Column(
                               children: [
-                                if (pickedFile != null)
-                                  //         Expanded(
-                                  //         child: Container(
-                                  //         color: Colors.blue[100],
-                                  //       child: Image.file(
-                                  //       File(pickedFile!.path!),
-                                  //     width: double.infinity,
-                                  //   fit: BoxFit.cover,
-                                  //          ),
-                                  //      ),
-                                  //  ),
-                                  if (pickedFile == null)
-                                    // ignore: avoid_unnecessary_containers
-                                    Container(
-                                      child: MaterialButton(
-                                        onPressed: chooseImage,
-                                        child: const Text("Choose Image"),
-                                        color:
-                                            const Color.fromARGB(255, 0, 0, 0),
-                                        textColor: Colors.white,
-                                      ),
-                                    ),
-                                if (pickedFile != null)
-                                  // ignore: avoid_unnecessary_containers
-                                  Container(
-                                    child: MaterialButton(
-                                      onPressed: () {
-                                        //               uploadFile();
-                                      },
-                                      child: const Text("Upload"),
-                                      color: const Color.fromARGB(255, 0, 0, 0),
-                                      textColor: Colors.white,
-                                    ),
-                                  ),
+                                // if (pickedFile != null)
+                                //   Expanded(
+                                //     child: Container(
+                                //       color: Colors.blue[100],
+                                //       child: Image.file(
+                                //         File(pickedFile!.path!),
+                                //         width: double.infinity,
+                                //         fit: BoxFit.cover,
+                                //       ),
+                                //     ),
+                                //   ),
+                                // if (pickedFile == null)
+                                // ignore: avoid_unnecessary_containers
+                                // Container(
+                                //   child: MaterialButton(
+                                //     onPressed: chooseImage,
+                                //     child: const Text("Choose Image"),
+                                //     color: const Color.fromARGB(255, 0, 0, 0),
+                                //     textColor: Colors.white,
+                                //   ),
+                                // ),
+                                // if (pickedFile != null)
+                                // ignore: avoid_unnecessary_containers
+                                // Container(
+                                //   child:
+                                //     child: const Text("Upload"),
+                                //     color: const Color.fromARGB(255, 0, 0, 0),
+                                //     textColor: Colors.white,
+                                //   ),
+                                // ),
+                                MaterialButton(
+                                  onPressed: () {
+                                    pickFiles();
+                                  },
+                                  child: Text("Upload"),
+                                )
                               ],
                             ),
                           ),
@@ -317,7 +369,12 @@ class _SendrequestState extends State<Sendrequest> {
                                 onPressed: () {
                                   // It returns true if the form is valid, otherwise returns false
                                   if (_formKey.currentState!.validate()) {
+                                    date = getDate();
+                                    site_nam = siteName;
+                                    name = dropdownValue;
                                     // If the form is valid, display a Snackbar.
+                                    uploadFile();
+                                    _submit();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
                                             content: Text(

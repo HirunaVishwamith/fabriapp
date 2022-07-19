@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fabriapp/site_staff/home_staff.dart';
+import 'package:fabriapp/site_staff/main_staff.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'admin_staff/main_admin.dart';
 
 class LoginUI extends StatefulWidget {
   const LoginUI({Key? key}) : super(key: key);
@@ -17,32 +21,52 @@ class _LoginUIState extends State<LoginUI> {
     TextEditingController passwordController_ = TextEditingController();
     Future _logIn() async {
       try {
-         await FirebaseAuth.instance
+        final UserCredential authResul = await FirebaseAuth.instance
             .signInWithEmailAndPassword(
                 email: emailController_.text,
                 password: passwordController_.text);
-        print("1");
+
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Data is Processing')));
+
+        FirebaseFirestore.instance
+            .collection('users')
+            .where('email', isEqualTo: emailController_.text)
+            .where('password', isEqualTo: passwordController_.text)
+            .get()
+            .then((querySnapshot) => {
+              // print(querySnapshot.docs[0].data()['site_name'])
+                  if (querySnapshot.docs[0].data()['site_name'].toString() ==
+                      'Admin Staff')
+                    {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AdminHome()),
+                      )
+                    }
+                  else if (querySnapshot.docs[0]
+                          .data()['site_name']
+                          .toString() ==
+                      'Site Worker')
+                    {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SiteStaffHome()),
+                      )
+                    }
+                });
       } on FirebaseAuthException catch (e) {
-        print("2");
         if (e.code == 'user-not-found') {
-          // ScaffoldMessenger.of(context)
-          //     .showSnackBar(const SnackBar(content: Text('Invalid Details')));
-          print('No user found for that email.');
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Invalid Details')));
         } else if (e.code == 'wrong-password') {
-          // ScaffoldMessenger.of(context)
-          //     .showSnackBar(const SnackBar(content: Text('Wrong Password')));
-          print('No pp');
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Wrong Password')));
         } else if (e.code == 'invalid-email') {
-          // ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('Invalid Email')));
-          print('No  email.');
-        } else {
-          print('done');
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //     const SnackBar(content: Text('Data is Processing')));
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const HomeStaff()),
-          );
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Invalid Email')));
         }
       }
     }
@@ -151,15 +175,8 @@ class _LoginUIState extends State<LoginUI> {
                       borderRadius: BorderRadius.circular(20)),
                   child: TextButton(
                     onPressed: () {
-                      _logIn();
-                      print(emailController_.text);
-                      print(passwordController_.text);
                       if (_formKey.currentState!.validate()) {
-                        // If the form is valid, display a Snackbar.
-                        // ScaffoldMessenger.of(context).showSnackBar(
-                        //     const SnackBar(
-                        //         content: Text('Data is in processing.')));
-
+                        _logIn();
                       }
                     },
                     child: const Text(
