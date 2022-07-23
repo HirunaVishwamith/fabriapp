@@ -1,9 +1,12 @@
 import 'package:fabriapp/admin_staff/main_admin.dart';
 import 'package:fabriapp/loginui.dart';
+import 'package:fabriapp/resetpassword.dart';
 import 'package:fabriapp/site_staff/home_staff.dart';
 import 'package:fabriapp/site_staff/main_staff.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
+import 'office_staff/main_officestaff.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +41,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return  LoginUI();
-
+    return LoginUI();
   }
 }

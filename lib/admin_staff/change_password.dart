@@ -127,8 +127,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 // If the form is valid, display a Snackbar.
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                    content: Text('Data is in processing.')));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text('Data is in processing.')));
                               }
                             },
                             child: const Text(

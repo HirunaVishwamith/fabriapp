@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_unnecessary_containers
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fabriapp/dirlist.dart';
 import 'package:fabriapp/loginui.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -72,6 +74,7 @@ class _DirectoryState extends State<Directory> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                dirList(),
                 //
               ],
             ),

@@ -32,7 +32,7 @@ class _CreateAccountState extends State<CreateAccount> {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: emailController.text, password: passwordController.text);
 
-        await FirebaseFirestore.instance.collection('users').add({
+        await FirebaseFirestore.instance.collection('users').doc(emailController.text).set({
           'email': emailController.text,
           'mobile': mobileController.text,
           'password': passwordController.text,
@@ -215,19 +215,19 @@ class _CreateAccountState extends State<CreateAccount> {
                               hintText: 'Minimum 8 Char & 1 Cap',
                               labelText: 'Password',
                             ),
-                            // validator: (value) {
-                            //   RegExp regex =
-                            //       RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z]).{8,}$');
-                            //   if (value!.isEmpty) {
-                            //     return 'Please enter password';
-                            //   } else {
-                            //     if (!regex.hasMatch(value)) {
-                            //       return 'Enter valid password';
-                            //     } else {
-                            //       return null;
-                            //     }
-                            //   }
-                            // }
+                            validator: (value) {
+                              RegExp regex =
+                                  RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z]).{8,}$');
+                              if (value!.isEmpty) {
+                                return 'Please enter password';
+                              } else {
+                                if (!regex.hasMatch(value)) {
+                                  return 'Enter valid password';
+                                } else {
+                                  return null;
+                                }
+                              }
+                            }
                           ),
                         const SizedBox(
                           height: 30,

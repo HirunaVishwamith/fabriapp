@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fabriapp/loginui.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
@@ -15,6 +17,22 @@ class _CompanyDirectoryState extends State<CompanyDirectory> {
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
+    TextEditingController namecont = TextEditingController();
+    TextEditingController compcont = TextEditingController();
+    TextEditingController contactcont = TextEditingController();
+    Future _addContact() async {
+      try {
+        await FirebaseFirestore.instance.collection('directory').add({
+          'name': namecont.text,
+          'company': compcont.text,
+          'contact_num': contactcont.text
+        });
+
+        // ignore: unused_catch_clause
+      } on FirebaseAuthException catch (e) {
+        print(e);
+      }
+    }
 
     return MaterialApp(
       home: Scaffold(
@@ -81,6 +99,7 @@ class _CompanyDirectoryState extends State<CompanyDirectory> {
                     child: Column(
                       children: [
                         TextFormField(
+                          controller: namecont,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             hintText: 'Enter Name',
@@ -95,6 +114,7 @@ class _CompanyDirectoryState extends State<CompanyDirectory> {
                         ),
                         const SizedBox(height: 15),
                         TextFormField(
+                          controller: compcont,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             hintText: 'Enter a Company Name',
@@ -109,6 +129,7 @@ class _CompanyDirectoryState extends State<CompanyDirectory> {
                         ),
                         const SizedBox(height: 15),
                         TextFormField(
+                          controller: contactcont,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             hintText: 'Enter Contact Number',
@@ -134,8 +155,12 @@ class _CompanyDirectoryState extends State<CompanyDirectory> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 // If the form is valid, display a Snackbar.
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                    content: Text('Data is in processing.')));
+                                _addContact();
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text('Data is in processing.')));
                               }
                             },
                             child: const Text(

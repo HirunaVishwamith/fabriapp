@@ -1,5 +1,7 @@
 // ignore_for_file: unused_import, avoid_unnecessary_containers
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fabriapp/admin_staff/reqestlist.dart';
 import 'package:fabriapp/loginui.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -16,7 +18,22 @@ class ReceiveRequests extends StatefulWidget {
 class _ReceiveRequestsState extends State<ReceiveRequests> {
   @override
   Widget build(BuildContext context) {
+    // Future _msglist() async {
+    //   FirebaseFirestore.instance
+    //       .collection('request')
+    //       .where('site_name', isEqualTo: "Admin")
+    //       .get()
+    //       .then((querySnapshot) => {
+    //             print(querySnapshot.docs[0].data())
+    //             // if (querySnapshot.docs[0].data()['site_name'].toString() ==
+    //             //     'Admin Staff')
+    //             //   {
 
+    //             //   }
+    //           });
+    // }
+
+    // _msglist();
     return MaterialApp(
       home: Scaffold(
         body: SafeArea(
@@ -73,6 +90,7 @@ class _ReceiveRequestsState extends State<ReceiveRequests> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                RequstList(),
                 //
               ],
             ),
